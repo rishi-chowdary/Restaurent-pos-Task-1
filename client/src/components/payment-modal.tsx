@@ -32,7 +32,7 @@ export function PaymentModal({ order, onClose, onPaymentSuccess }: PaymentModalP
     setErrorMessage('');
 
     if (method === 'Cash' && numericTendered < totalDue) {
-      setErrorMessage(`Insufficient cash tendered. Total due is $${totalDue.toFixed(2)}.`);
+      setErrorMessage(`Insufficient cash tendered. Total due is ₹${totalDue.toFixed(2)}.`);
       return;
     }
 
@@ -41,7 +41,7 @@ export function PaymentModal({ order, onClose, onPaymentSuccess }: PaymentModalP
       const updated = await recordPaymentApi(order._id, {
         method,
         amount: totalDue, // Server strictly enforces amount === order.total
-        reference: method === 'Cash' ? (cashTendered ? `Tendered $${numericTendered}, Change $${changeDue.toFixed(2)}` : undefined) : reference || undefined,
+        reference: method === 'Cash' ? (cashTendered ? `Tendered ₹${numericTendered}, Change ₹${changeDue.toFixed(2)}` : undefined) : reference || undefined,
       });
 
       onPaymentSuccess(updated);
@@ -101,7 +101,7 @@ export function PaymentModal({ order, onClose, onPaymentSuccess }: PaymentModalP
             Total Amount Due
           </div>
           <div style={{ fontSize: '32px', fontWeight: '800', color: '#f8fafc', marginTop: '4px' }}>
-            ${totalDue.toFixed(2)}
+            ₹{totalDue.toFixed(2)}
           </div>
           <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '4px' }}>
             {order.items.length} items &bull; {order.type.toUpperCase()} {order.tableNumber ? `(Table ${order.tableNumber})` : ''}
@@ -111,7 +111,7 @@ export function PaymentModal({ order, onClose, onPaymentSuccess }: PaymentModalP
         {/* Payment method selector */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '20px' }}>
           {[
-            { id: 'Cash', label: 'Cash', icon: Banknote },
+            { id: 'Cash', label: 'Cash (INR)', icon: Banknote },
             { id: 'UPI', label: 'UPI / QR', icon: QrCode },
             { id: 'Card', label: 'Card / POS', icon: CreditCard },
           ].map((item) => {
@@ -150,20 +150,20 @@ export function PaymentModal({ order, onClose, onPaymentSuccess }: PaymentModalP
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '20px' }}>
               <div>
                 <label style={{ fontSize: '12px', fontWeight: '600', color: '#94a3b8', display: 'block', marginBottom: '6px' }}>
-                  Cash Tendered ($)
+                  Cash Tendered (₹)
                 </label>
                 <input
                   type="number"
-                  step="0.01"
+                  step="1"
                   min={totalDue}
                   className="input-field"
-                  placeholder={`Exact: $${totalDue.toFixed(2)}`}
+                  placeholder={`Exact: ₹${totalDue.toFixed(2)}`}
                   value={cashTendered}
                   onChange={(e) => setCashTendered(e.target.value)}
                 />
               </div>
 
-              {/* Quick cash denomination chips */}
+              {/* Quick cash denomination chips for Indian currency */}
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 <button
                   type="button"
@@ -171,9 +171,9 @@ export function PaymentModal({ order, onClose, onPaymentSuccess }: PaymentModalP
                   className="btn btn-secondary"
                   style={{ padding: '6px 10px', fontSize: '11px' }}
                 >
-                  Exact (${totalDue.toFixed(2)})
+                  Exact (₹{totalDue.toFixed(2)})
                 </button>
-                {[10, 20, 50, 100].filter((val) => val >= totalDue).map((val) => (
+                {[100, 200, 500, 1000, 2000].filter((val) => val >= totalDue).map((val) => (
                   <button
                     key={val}
                     type="button"
@@ -181,7 +181,7 @@ export function PaymentModal({ order, onClose, onPaymentSuccess }: PaymentModalP
                     className="btn btn-secondary"
                     style={{ padding: '6px 10px', fontSize: '11px' }}
                   >
-                    ${val}
+                    ₹{val}
                   </button>
                 ))}
               </div>
@@ -198,7 +198,7 @@ export function PaymentModal({ order, onClose, onPaymentSuccess }: PaymentModalP
                 }}>
                   <span style={{ fontSize: '13px', color: '#a7f3d0', fontWeight: '600' }}>Change Return:</span>
                   <span style={{ fontSize: '18px', fontWeight: '800', color: '#10b981' }}>
-                    ${changeDue.toFixed(2)}
+                    ₹{changeDue.toFixed(2)}
                   </span>
                 </div>
               )}
@@ -228,10 +228,10 @@ export function PaymentModal({ order, onClose, onPaymentSuccess }: PaymentModalP
                   <QrCode size={100} color="#000000" />
                 </div>
                 <div style={{ fontSize: '12px', color: '#f8fafc', fontWeight: '600' }}>
-                  Scan UPI QR to Pay ${totalDue.toFixed(2)}
+                  Scan UPI QR (PhonePe / GPay / Paytm) to Pay ₹{totalDue.toFixed(2)}
                 </div>
                 <div style={{ fontSize: '11px', color: '#94a3b8' }}>
-                  restaurant@upi &bull; Instant Settlement
+                  UPI ID: royalcuisine@okhdfcbank &bull; Instant Settlement
                 </div>
               </div>
 
@@ -242,7 +242,7 @@ export function PaymentModal({ order, onClose, onPaymentSuccess }: PaymentModalP
                 <input
                   type="text"
                   className="input-field"
-                  placeholder="e.g. UPI-928472910394"
+                  placeholder="e.g. 428901847291"
                   value={reference}
                   onChange={(e) => setReference(e.target.value)}
                 />
@@ -264,10 +264,10 @@ export function PaymentModal({ order, onClose, onPaymentSuccess }: PaymentModalP
                 <CreditCard size={28} color="#38bdf8" />
                 <div>
                   <div style={{ fontSize: '13px', fontWeight: '700', color: '#f8fafc' }}>
-                    Swipe / Tap Card on Terminal
+                    Swipe / Tap Card on POS EDC Machine
                   </div>
                   <div style={{ fontSize: '11px', color: '#94a3b8' }}>
-                    Terminal will charge exactly ${totalDue.toFixed(2)}
+                    Terminal will charge exactly ₹{totalDue.toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -295,7 +295,7 @@ export function PaymentModal({ order, onClose, onPaymentSuccess }: PaymentModalP
               style={{ flex: 1, padding: '12px' }}
             >
               <CheckCircle2 size={16} />
-              {isSubmitting ? 'Recording...' : `Confirm Payment ($${totalDue.toFixed(2)})`}
+              {isSubmitting ? 'Recording...' : `Confirm Payment (₹${totalDue.toFixed(2)})`}
             </button>
             <button
               type="button"

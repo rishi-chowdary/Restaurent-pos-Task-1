@@ -213,7 +213,7 @@ export async function recordOrderPayment(
   // Business rule: payment amount must exactly equal order total
   if (Math.abs(paymentData.amount - order.total) > 0.009) {
     throw new AppError(
-      `Payment amount ($${paymentData.amount}) must equal order total ($${order.total}).`,
+      `Payment amount (₹${paymentData.amount}) must equal order total (₹${order.total}).`,
       422,
       'INVALID_PAYMENT_AMOUNT'
     );

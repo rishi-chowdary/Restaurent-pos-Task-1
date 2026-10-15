@@ -67,7 +67,7 @@ export default function MenuManagementPage() {
   const openCreateModal = () => {
     setEditingItem(null);
     setFormName('');
-    setFormCategory('Burgers');
+    setFormCategory('Biryani & Rice');
     setFormPrice('');
     setFormAvailable(true);
     setFormActive(true);
@@ -159,10 +159,10 @@ export default function MenuManagementPage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '14px' }}>
         <div>
           <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#f8fafc' }}>
-            Menu Catalog Management
+            Indian Menu Catalog Management
           </h1>
           <p style={{ color: '#94a3b8', fontSize: '13px', marginTop: '2px' }}>
-            Configure dishes, set prices, toggle daily availability, and deactivate seasonal items
+            Configure dishes, set prices in Indian Rupees (₹), toggle availability, and manage catalog status
           </p>
         </div>
 
@@ -233,7 +233,7 @@ export default function MenuManagementPage() {
             <tr style={{ background: 'rgba(255, 255, 255, 0.03)', borderBottom: '1px solid var(--border-subtle)', color: '#94a3b8', textTransform: 'uppercase', fontSize: '11px', letterSpacing: '0.8px' }}>
               <th style={{ padding: '14px 18px' }}>Item Name</th>
               <th style={{ padding: '14px 18px' }}>Category</th>
-              <th style={{ padding: '14px 18px' }}>Price</th>
+              <th style={{ padding: '14px 18px' }}>Price (₹)</th>
               <th style={{ padding: '14px 18px' }}>In Stock</th>
               <th style={{ padding: '14px 18px' }}>Status</th>
               <th style={{ padding: '14px 18px', textAlign: 'right' }}>Actions</th>
@@ -251,7 +251,7 @@ export default function MenuManagementPage() {
                   </span>
                 </td>
                 <td style={{ padding: '14px 18px', fontWeight: '700', color: '#f59e0b' }}>
-                  ${item.price.toFixed(2)}
+                  ₹{item.price.toFixed(2)}
                 </td>
                 <td style={{ padding: '14px 18px' }}>
                   <button
@@ -314,7 +314,7 @@ export default function MenuManagementPage() {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#f8fafc' }}>
-                {editingItem ? 'Edit Menu Item' : 'Add New Menu Item'}
+                {editingItem ? 'Edit Menu Dish' : 'Add New Indian Dish'}
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -345,12 +345,12 @@ export default function MenuManagementPage() {
             <form onSubmit={handleSubmitModal} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
                 <label style={{ fontSize: '12px', fontWeight: '600', color: '#94a3b8', display: 'block', marginBottom: '6px' }}>
-                  Item Name
+                  Dish Name
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Truffle Brioche Burger"
+                  placeholder="e.g. Paneer Tikka Masala"
                   className="input-field"
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
@@ -364,7 +364,7 @@ export default function MenuManagementPage() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Burgers, Pizzas, Beverages"
+                  placeholder="e.g. Biryani & Rice, Curries & Gravies, Breads & Raitas"
                   className="input-field"
                   value={formCategory}
                   onChange={(e) => setFormCategory(e.target.value)}
@@ -373,14 +373,14 @@ export default function MenuManagementPage() {
 
               <div>
                 <label style={{ fontSize: '12px', fontWeight: '600', color: '#94a3b8', display: 'block', marginBottom: '6px' }}>
-                  Price ($)
+                  Price (₹ INR)
                 </label>
                 <input
                   type="number"
-                  step="0.01"
+                  step="1"
                   required
-                  min="0.01"
-                  placeholder="14.99"
+                  min="1"
+                  placeholder="280"
                   className="input-field"
                   value={formPrice}
                   onChange={(e) => setFormPrice(e.target.value)}

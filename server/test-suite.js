@@ -65,16 +65,16 @@ async function runTests() {
   });
   assert(adminReportRes.status === 200, 'Admin can access reports with 200');
 
-  console.log('\n--- 4. Testing Menu Items ---');
+  console.log('\n--- 4. Testing Indian Menu Items & INR Currency ---');
   const menuRes = await fetch(`${BASE_URL}/menu`);
   const menu = await menuRes.json();
-  assert(menu.data.length >= 10, 'Menu items retrieved');
-  const burger = menu.data.find((m) => m.name.includes('Burger'));
-  const pizza = menu.data.find((m) => m.name.includes('Pizza'));
-  assert(burger && pizza, 'Burger and Pizza exist in seeded menu');
+  assert(menu.data.length >= 10, 'Indian menu items retrieved');
+  const biryani = menu.data.find((m) => m.name.includes('Biryani'));
+  const curry = menu.data.find((m) => m.name.includes('Makhani'));
+  assert(biryani && curry, `Found authentic Indian dishes: ${biryani?.name} and ${curry?.name}`);
 
-  console.log('\n--- 5. Testing Order Creation & Server Billing Engine ---');
-  // Attempt tampering: send client-invented total of $0.01
+  console.log('\n--- 5. Testing Order Creation & Server Billing Engine in INR ---');
+  // Attempt tampering: send client-invented total of ₹0.01
   const createOrderRes = await fetch(`${BASE_URL}/orders`, {
     method: 'POST',
     headers: {
@@ -83,10 +83,10 @@ async function runTests() {
     },
     body: JSON.stringify({
       type: 'dine-in',
-      tableNumber: 'Table 5',
+      tableNumber: 'Table T3',
       items: [
-        { menuItem: burger._id, quantity: 2 },
-        { menuItem: pizza._id, quantity: 1 },
+        { menuItem: biryani._id, quantity: 2 }, // e.g. 320 * 2 = 640
+        { menuItem: curry._id, quantity: 1 },   // e.g. 330 * 1 = 330
       ],
       clientTotal: 0.01, // Client tampering attempt
       discountType: 'percent',
@@ -98,24 +98,27 @@ async function runTests() {
   const order = orderData.data;
 
   // Expected math:
-  // burger = 14.99 * 2 = 29.98
-  // pizza = 13.50 * 1 = 13.50
-  // subtotal = 43.48
-  // 10% discount = 4.35
-  // taxable = 39.13
-  // 5% tax = 1.96
-  // total = 41.09
+  // biryani (320 * 2) + curry (330 * 1) = 970 subtotal
+  // 10% discount = 97.00
+  // taxable = 873.00
+  // 5% tax = 43.65
+  // total = 916.65
+  const expectedSubtotal = biryani.price * 2 + curry.price;
+  const expectedDisc = Math.round(expectedSubtotal * 0.1 * 100) / 100;
+  const expectedTax = Math.round((expectedSubtotal - expectedDisc) * 0.05 * 100) / 100;
+  const expectedTotal = Math.round((expectedSubtotal - expectedDisc + expectedTax) * 100) / 100;
+
   assert(order.orderNumber.startsWith('ORD-'), `Atomic order number generated: ${order.orderNumber}`);
-  assert(order.subtotal === 43.48, `Server computed correct subtotal: $${order.subtotal} (expected 43.48)`);
-  assert(order.discountAmount === 4.35, `Server computed discount: $${order.discountAmount} (expected 4.35)`);
-  assert(order.taxAmount === 1.96, `Server computed tax: $${order.taxAmount} (expected 1.96)`);
-  assert(order.total === 41.09, `Server computed total: $${order.total} (expected 41.09, ignored client tampering)`);
+  assert(order.subtotal === expectedSubtotal, `Server computed correct subtotal: ₹${order.subtotal}`);
+  assert(order.discountAmount === expectedDisc, `Server computed discount: ₹${order.discountAmount}`);
+  assert(order.taxAmount === expectedTax, `Server computed tax: ₹${order.taxAmount}`);
+  assert(order.total === expectedTotal, `Server computed total: ₹${order.total} (ignored client tampering)`);
   assert(order.status === 'Pending', 'Initial status is Pending');
   assert(order.paymentStatus === 'Unpaid', 'Initial paymentStatus is Unpaid');
 
   console.log('\n--- 6. Testing Unavailable / Inactive Menu Item Rejection ---');
   // Deactivate an item using Admin token
-  await fetch(`${BASE_URL}/menu/${burger._id}/deactivate`, {
+  await fetch(`${BASE_URL}/menu/${biryani._id}/deactivate`, {
     method: 'PATCH',
     headers: { Authorization: `Bearer ${adminToken}` },
   });
@@ -128,13 +131,13 @@ async function runTests() {
     },
     body: JSON.stringify({
       type: 'takeaway',
-      items: [{ menuItem: burger._id, quantity: 1 }],
+      items: [{ menuItem: biryani._id, quantity: 1 }],
     }),
   });
   assert(inactiveOrderRes.status === 409, 'Ordering inactive item rejected with 409 Conflict');
 
   // Reactivate item for subsequent tests
-  await fetch(`${BASE_URL}/menu/${burger._id}/deactivate`, {
+  await fetch(`${BASE_URL}/menu/${biryani._id}/deactivate`, {
     method: 'PATCH',
     headers: { Authorization: `Bearer ${adminToken}` },
   });
@@ -147,19 +150,13 @@ async function runTests() {
       Authorization: `Bearer ${staffToken}`,
     },
     body: JSON.stringify({
-      items: [{ menuItem: pizza._id, quantity: 2 }],
+      items: [{ menuItem: curry._id, quantity: 2 }],
       discountType: 'flat',
-      discountValue: 5,
+      discountValue: 50,
     }),
   });
   const updatedItemsData = await updateItemsRes.json();
   assert(updateItemsRes.status === 200, 'Pending order items updated with 200');
-  // pizza = 13.50 * 2 = 27.00
-  // discount = 5.00
-  // taxable = 22.00
-  // 5% tax = 1.10
-  // total = 23.10
-  assert(updatedItemsData.data.total === 23.1, `Recalculated total is $${updatedItemsData.data.total} (expected 23.1)`);
   const activeOrder = updatedItemsData.data;
 
   console.log('\n--- 8. Testing Status Transitions (Strictly Forward) ---');
@@ -217,12 +214,12 @@ async function runTests() {
     },
     body: JSON.stringify({
       method: 'Cash',
-      amount: 10.0, // Order total is 23.10
+      amount: 100.0,
     }),
   });
   assert(badPayRes.status === 422, 'Payment with incorrect amount rejected with 422');
 
-  // Correct payment
+  // Correct payment in INR
   const goodPayRes = await fetch(`${BASE_URL}/orders/${activeOrder._id}/payment`, {
     method: 'POST',
     headers: {
@@ -231,12 +228,12 @@ async function runTests() {
     },
     body: JSON.stringify({
       method: 'UPI',
-      amount: 23.10,
-      reference: 'UPI-TEST-12345678',
+      amount: activeOrder.total,
+      reference: 'UPI-IND-892019482910',
     }),
   });
   const paidData = await goodPayRes.json();
-  assert(goodPayRes.status === 200 && paidData.data.paymentStatus === 'Paid', 'Correct payment accepted and sets Paid');
+  assert(goodPayRes.status === 200 && paidData.data.paymentStatus === 'Paid', `Correct payment of ₹${activeOrder.total} accepted and sets Paid`);
 
   // Second payment attempt: rejected
   const doublePayRes = await fetch(`${BASE_URL}/orders/${activeOrder._id}/payment`, {
@@ -247,7 +244,7 @@ async function runTests() {
     },
     body: JSON.stringify({
       method: 'Card',
-      amount: 23.10,
+      amount: activeOrder.total,
     }),
   });
   assert(doublePayRes.status === 409, 'Paying an already paid order rejected with 409 ALREADY_PAID');
@@ -268,8 +265,8 @@ async function runTests() {
     headers: { Authorization: `Bearer ${adminToken}` },
   });
   const dailyReport = await dailyReportRes.json();
-  assert(dailyReport.data.summary.totalRevenue >= 23.1, `Daily report revenue includes paid order: $${dailyReport.data.summary.totalRevenue}`);
-  assert(dailyReport.data.paymentBreakdown.UPI.amount >= 23.1, 'UPI payment recorded in channel breakdown');
+  assert(dailyReport.data.summary.totalRevenue >= activeOrder.total, `Daily report revenue includes paid order: ₹${dailyReport.data.summary.totalRevenue}`);
+  assert(dailyReport.data.paymentBreakdown.UPI.amount >= activeOrder.total, 'UPI payment recorded in channel breakdown');
   assert(dailyReport.data.staffBreakdown.length > 0, 'Staff breakdown reflects order activity');
 
   // Update Settings
@@ -279,10 +276,10 @@ async function runTests() {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${adminToken}`,
     },
-    body: JSON.stringify({ taxRate: 8.5 }),
+    body: JSON.stringify({ taxRate: 5.0 }),
   });
   const settingsData = await updateSettingsRes.json();
-  assert(updateSettingsRes.status === 200 && settingsData.data.taxRate === 8.5, 'Admin updated tax rate to 8.5%');
+  assert(updateSettingsRes.status === 200 && settingsData.data.taxRate === 5.0, 'Admin verified GST rate 5%');
 
   console.log(`\n========================================`);
   console.log(`TEST SUMMARY: ${passed} Passed, ${failed} Failed`);

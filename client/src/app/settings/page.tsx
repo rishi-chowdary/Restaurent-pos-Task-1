@@ -40,7 +40,7 @@ export default function SettingsPage() {
 
     const numeric = parseFloat(taxRate);
     if (isNaN(numeric) || numeric < 0 || numeric > 100) {
-      setErrorBanner('Tax rate must be between 0% and 100%');
+      setErrorBanner('GST rate must be between 0% and 100%');
       return;
     }
 
@@ -48,7 +48,7 @@ export default function SettingsPage() {
       setIsSaving(true);
       const updated = await updateSettingsApi(numeric);
       setTaxRate(updated.taxRate.toString());
-      setSuccessBanner(`Tax rate updated successfully to ${updated.taxRate}%!`);
+      setSuccessBanner(`GST rate updated successfully to ${updated.taxRate}%!`);
     } catch (err: any) {
       setErrorBanner(err.message || 'Failed to update settings');
     } finally {
@@ -57,7 +57,7 @@ export default function SettingsPage() {
   };
 
   const parsedTax = parseFloat(taxRate) || 0;
-  const sampleSubtotal = 100.0;
+  const sampleSubtotal = 1000.0;
   const sampleTax = (sampleSubtotal * parsedTax) / 100;
   const sampleTotal = sampleSubtotal + sampleTax;
 
@@ -79,10 +79,10 @@ export default function SettingsPage() {
         </div>
         <div>
           <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#f8fafc' }}>
-            System Tax & POS Settings
+            System GST & POS Settings
           </h1>
           <p style={{ color: '#94a3b8', fontSize: '13px', marginTop: '2px' }}>
-            Configure default sales tax applied across all customer orders
+            Configure default restaurant GST rate applied across all customer orders (Standard: 5.0%)
           </p>
         </div>
       </div>
@@ -127,7 +127,7 @@ export default function SettingsPage() {
         <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
             <label style={{ fontSize: '13px', fontWeight: '700', color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-              <Percent size={15} color="#f59e0b" /> Default Sales Tax Rate (%)
+              <Percent size={15} color="#f59e0b" /> Restaurant GST Rate (%)
             </label>
             <input
               type="number"
@@ -153,19 +153,19 @@ export default function SettingsPage() {
             padding: '16px'
           }}>
             <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.8px', color: '#64748b', fontWeight: '700', marginBottom: '10px' }}>
-              Calculation Simulation (Sample $100.00 Ticket)
+              Calculation Simulation (Sample ₹1,000.00 Ticket)
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#cbd5e1', marginBottom: '6px' }}>
               <span>Sample Subtotal:</span>
-              <span>${sampleSubtotal.toFixed(2)}</span>
+              <span>₹{sampleSubtotal.toFixed(2)}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#cbd5e1', marginBottom: '6px' }}>
-              <span>Calculated Tax ({parsedTax}%):</span>
-              <span>${sampleTax.toFixed(2)}</span>
+              <span>Calculated GST ({parsedTax}%):</span>
+              <span>₹{sampleTax.toFixed(2)}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px', fontWeight: '800', color: '#f8fafc', paddingTop: '8px', borderTop: '1px dashed var(--border-subtle)' }}>
               <span>Estimated Order Total:</span>
-              <span style={{ color: '#f59e0b' }}>${sampleTotal.toFixed(2)}</span>
+              <span style={{ color: '#f59e0b' }}>₹{sampleTotal.toFixed(2)}</span>
             </div>
           </div>
 

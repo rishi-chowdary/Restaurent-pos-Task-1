@@ -95,7 +95,7 @@ export async function calculateOrderTotals(
 
   if (discountAmount > subtotal) {
     throw new AppError(
-      `Discount amount ($${discountAmount}) cannot exceed order subtotal ($${subtotal}).`,
+      `Discount amount (₹${discountAmount}) cannot exceed order subtotal (₹${subtotal}).`,
       422,
       'INVALID_DISCOUNT'
     );

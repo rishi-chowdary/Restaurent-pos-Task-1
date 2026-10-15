@@ -118,8 +118,6 @@ export function EditOrderModal({ order, onClose, onOrderUpdated }: EditOrderModa
     }
   };
 
-  const estimatedSubtotal = items.reduce((sum, it) => sum + it.price * it.quantity, 0);
-
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -167,7 +165,7 @@ export function EditOrderModal({ order, onClose, onOrderUpdated }: EditOrderModa
               <option value="">-- Add another menu item --</option>
               {availableMenuItems.map((item) => (
                 <option key={item._id} value={item._id}>
-                  {item.name} (${item.price.toFixed(2)})
+                  {item.name} (₹{item.price.toFixed(2)})
                 </option>
               ))}
             </select>
@@ -201,7 +199,7 @@ export function EditOrderModal({ order, onClose, onOrderUpdated }: EditOrderModa
                     {item.name}
                   </div>
                   <div style={{ fontSize: '12px', color: '#94a3b8' }}>
-                    ${item.price.toFixed(2)} each &bull; Line: ${(item.price * item.quantity).toFixed(2)}
+                    ₹{item.price.toFixed(2)} each &bull; Line: ₹{(item.price * item.quantity).toFixed(2)}
                   </div>
                 </div>
 
@@ -249,7 +247,7 @@ export function EditOrderModal({ order, onClose, onOrderUpdated }: EditOrderModa
                 value={discountType}
                 onChange={(e) => setDiscountType(e.target.value as any)}
               >
-                <option value="flat">Flat Dollar ($)</option>
+                <option value="flat">Flat Rupees (₹)</option>
                 <option value="percent">Percentage (%)</option>
               </select>
             </div>

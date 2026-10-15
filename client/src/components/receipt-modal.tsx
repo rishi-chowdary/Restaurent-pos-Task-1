@@ -16,7 +16,7 @@ export function ReceiptModal({ order, onClose }: ReceiptModalProps) {
     window.print();
   };
 
-  const formattedDate = new Date(order.createdAt).toLocaleString('en-US', {
+  const formattedDate = new Date(order.createdAt).toLocaleString('en-IN', {
     dateStyle: 'medium',
     timeStyle: 'short',
   });
@@ -25,7 +25,7 @@ export function ReceiptModal({ order, onClose }: ReceiptModalProps) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" style={{ maxWidth: '440px', background: '#0f172a' }} onClick={(e) => e.stopPropagation()}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#f8fafc' }}>Customer Receipt</h3>
+          <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#f8fafc' }}>Tax Invoice / Customer Receipt</h3>
           <button
             onClick={onClose}
             style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
@@ -38,10 +38,10 @@ export function ReceiptModal({ order, onClose }: ReceiptModalProps) {
         <div className="receipt-paper">
           <div style={{ textAlign: 'center', marginBottom: '14px' }}>
             <h2 style={{ fontSize: '18px', fontWeight: '800', letterSpacing: '1px', margin: '0 0 4px 0' }}>
-              SAVOR RESTAURANT & BAR
+              SAVOR ROYAL INDIAN RESTAURANT
             </h2>
-            <div style={{ fontSize: '11px', color: '#4b5563' }}>742 Evergreen Terrace, Suite 100</div>
-            <div style={{ fontSize: '11px', color: '#4b5563' }}>Tel: (555) 234-5678</div>
+            <div style={{ fontSize: '11px', color: '#4b5563' }}>100 Feet Road, Indiranagar, Bengaluru</div>
+            <div style={{ fontSize: '11px', color: '#4b5563' }}>GSTIN: 29AABCU9603R1ZM &bull; Tel: +91 80 4123 4567</div>
             <div style={{ margin: '8px 0', borderBottom: '1px dashed #9ca3af' }} />
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
               <span>Order #: {order.orderNumber}</span>
@@ -74,8 +74,8 @@ export function ReceiptModal({ order, onClose }: ReceiptModalProps) {
                 <tr key={index} style={{ borderBottom: '1px dotted #e5e7eb' }}>
                   <td style={{ padding: '6px 0', fontWeight: '600' }}>{item.nameSnapshot}</td>
                   <td style={{ textAlign: 'center', padding: '6px 0' }}>{item.quantity}</td>
-                  <td style={{ textAlign: 'right', padding: '6px 0' }}>${item.priceSnapshot.toFixed(2)}</td>
-                  <td style={{ textAlign: 'right', padding: '6px 0' }}>${item.lineTotal.toFixed(2)}</td>
+                  <td style={{ textAlign: 'right', padding: '6px 0' }}>₹{item.priceSnapshot.toFixed(2)}</td>
+                  <td style={{ textAlign: 'right', padding: '6px 0' }}>₹{item.lineTotal.toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
@@ -86,21 +86,21 @@ export function ReceiptModal({ order, onClose }: ReceiptModalProps) {
           <div style={{ fontSize: '11px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>Subtotal:</span>
-              <span>${order.subtotal.toFixed(2)}</span>
+              <span>₹{order.subtotal.toFixed(2)}</span>
             </div>
             {order.discountAmount > 0 && (
               <div style={{ display: 'flex', justifyContent: 'space-between', color: '#b91c1c' }}>
                 <span>Discount ({order.discountType === 'percent' ? `${order.discountValue}%` : 'Flat'}):</span>
-                <span>-${order.discountAmount.toFixed(2)}</span>
+                <span>-₹{order.discountAmount.toFixed(2)}</span>
               </div>
             )}
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span>Tax ({order.taxRate}%):</span>
-              <span>${order.taxAmount.toFixed(2)}</span>
+              <span>GST ({order.taxRate}%):</span>
+              <span>₹{order.taxAmount.toFixed(2)}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', fontWeight: '800', marginTop: '6px', paddingTop: '6px', borderTop: '1px solid #111827' }}>
               <span>TOTAL DUE:</span>
-              <span>${order.total.toFixed(2)}</span>
+              <span>₹{order.total.toFixed(2)}</span>
             </div>
           </div>
 
@@ -110,7 +110,7 @@ export function ReceiptModal({ order, onClose }: ReceiptModalProps) {
             {order.paymentStatus === 'Paid' && order.payment ? (
               <div style={{ padding: '6px', background: '#ecfdf5', borderRadius: '4px', border: '1px solid #a7f3d0', color: '#065f46' }}>
                 <div style={{ fontWeight: '700' }}>PAID VIA {order.payment.method.toUpperCase()}</div>
-                <div>Amount: ${order.payment.amount.toFixed(2)}</div>
+                <div>Amount: ₹{order.payment.amount.toFixed(2)}</div>
                 {order.payment.reference && <div>Ref: {order.payment.reference}</div>}
               </div>
             ) : (
@@ -119,7 +119,7 @@ export function ReceiptModal({ order, onClose }: ReceiptModalProps) {
               </div>
             )}
             <div style={{ marginTop: '12px', color: '#6b7280', fontSize: '10px' }}>
-              Thank you for dining with us!<br />Please retain this receipt for your records.
+              Dhanyawaad! Thank you for dining with us.<br />Please visit again!
             </div>
           </div>
         </div>

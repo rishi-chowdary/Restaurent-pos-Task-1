@@ -6,7 +6,6 @@ import { useAuth } from '../../lib/auth-context';
 import { DailyReport, getDailySalesReportApi } from '../../lib/api';
 import {
   Calendar,
-  DollarSign,
   TrendingUp,
   Receipt,
   Users,
@@ -16,6 +15,7 @@ import {
   CreditCard,
   AlertCircle,
   BarChart,
+  IndianRupee,
 } from 'lucide-react';
 
 export default function DailyReportsPage() {
@@ -67,7 +67,7 @@ export default function DailyReportsPage() {
             Daily Sales & Staff Performance
           </h1>
           <p style={{ color: '#94a3b8', fontSize: '13px', marginTop: '2px' }}>
-            Audited financial breakdown, settlement channels, and cashier leaderboard
+            Audited financial breakdown in Indian Rupees (₹), tender settlement channels, and cashier leaderboard
           </p>
         </div>
 
@@ -111,11 +111,11 @@ export default function DailyReportsPage() {
                   Total Revenue
                 </span>
                 <div style={{ padding: '8px', borderRadius: '8px', background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b' }}>
-                  <DollarSign size={18} />
+                  <IndianRupee size={18} />
                 </div>
               </div>
               <div style={{ fontSize: '28px', fontWeight: '800', color: '#f8fafc', marginTop: '10px' }}>
-                ${report.summary.totalRevenue.toFixed(2)}
+                ₹{report.summary.totalRevenue.toFixed(2)}
               </div>
               <div style={{ fontSize: '12px', color: '#10b981', marginTop: '6px' }}>
                 {report.summary.paidOrdersCount} orders paid
@@ -149,7 +149,7 @@ export default function DailyReportsPage() {
                 </div>
               </div>
               <div style={{ fontSize: '28px', fontWeight: '800', color: '#f8fafc', marginTop: '10px' }}>
-                ${report.summary.averageOrderValue.toFixed(2)}
+                ₹{report.summary.averageOrderValue.toFixed(2)}
               </div>
               <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '6px' }}>
                 Per settled ticket
@@ -159,17 +159,17 @@ export default function DailyReportsPage() {
             <div className="glass-panel" style={{ padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <span style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.8px', color: '#94a3b8', fontWeight: '700' }}>
-                  Tax Collected
+                  GST Collected
                 </span>
                 <div style={{ padding: '8px', borderRadius: '8px', background: 'rgba(139, 92, 246, 0.15)', color: '#a78bfa' }}>
                   <BarChart size={18} />
                 </div>
               </div>
               <div style={{ fontSize: '28px', fontWeight: '800', color: '#f8fafc', marginTop: '10px' }}>
-                ${report.summary.totalTaxCollected.toFixed(2)}
+                ₹{report.summary.totalTaxCollected.toFixed(2)}
               </div>
               <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '6px' }}>
-                Discounts given: ${report.summary.totalDiscountGiven.toFixed(2)}
+                Discounts given: ₹{report.summary.totalDiscountGiven.toFixed(2)}
               </div>
             </div>
           </div>
@@ -184,7 +184,7 @@ export default function DailyReportsPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 {[
                   {
-                    name: 'Cash',
+                    name: 'Cash (INR)',
                     data: report.paymentBreakdown.Cash,
                     icon: Banknote,
                     color: '#10b981',
@@ -214,7 +214,7 @@ export default function DailyReportsPage() {
                           <span style={{ fontSize: '11px', color: '#94a3b8' }}>({channel.data.count} txns)</span>
                         </div>
                         <span style={{ fontSize: '15px', fontWeight: '800', color: '#f8fafc' }}>
-                          ${channel.data.amount.toFixed(2)}
+                          ₹{channel.data.amount.toFixed(2)}
                         </span>
                       </div>
                       <div style={{ background: 'rgba(255, 255, 255, 0.05)', borderRadius: '9999px', height: '6px', overflow: 'hidden' }}>
@@ -272,7 +272,7 @@ export default function DailyReportsPage() {
 
                       <div style={{ textAlign: 'right' }}>
                         <div style={{ fontSize: '14px', fontWeight: '800', color: '#10b981' }}>
-                          ${staff.totalSales.toFixed(2)}
+                          ₹{staff.totalSales.toFixed(2)}
                         </div>
                         <div style={{ fontSize: '10px', color: '#64748b' }}>revenue</div>
                       </div>
@@ -286,7 +286,7 @@ export default function DailyReportsPage() {
           {/* Top Selling Items */}
           <div className="glass-panel" style={{ padding: '20px' }}>
             <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#f8fafc', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Award size={18} color="#f59e0b" /> Top Selling Menu Items
+              <Award size={18} color="#f59e0b" /> Top Selling Indian Dishes
             </h3>
 
             {report.topSellingItems.length === 0 ? (
@@ -313,7 +313,7 @@ export default function DailyReportsPage() {
                       </div>
                     </div>
                     <div style={{ fontSize: '15px', fontWeight: '800', color: '#f8fafc' }}>
-                      ${item.revenue.toFixed(2)}
+                      ₹{item.revenue.toFixed(2)}
                     </div>
                   </div>
                 ))}

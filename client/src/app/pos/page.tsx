@@ -167,7 +167,7 @@ export default function PosPage() {
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '24px', alignItems: 'start' }}>
-      {/* Left panel: Menu item browser */}
+      {/* Left panel: Indian Menu catalog browser */}
       <div>
         {/* Placed order alert banner */}
         {placedOrder && (
@@ -189,7 +189,7 @@ export default function PosPage() {
                   Order {placedOrder.orderNumber} placed successfully!
                 </span>
                 <span style={{ fontSize: '13px', marginLeft: '8px' }}>
-                  Total: ${placedOrder.total.toFixed(2)}
+                  Total: ₹{placedOrder.total.toFixed(2)}
                 </span>
               </div>
             </div>
@@ -218,7 +218,7 @@ export default function PosPage() {
             <Search size={18} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
             <input
               type="text"
-              placeholder="Search dishes or drinks..."
+              placeholder="Search Indian dishes, biryanis, curries..."
               className="input-field"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -285,7 +285,7 @@ export default function PosPage() {
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '16px' }}>
                   <div style={{ fontSize: '18px', fontWeight: '800', color: '#f8fafc' }}>
-                    ${item.price.toFixed(2)}
+                    ₹{item.price.toFixed(2)}
                   </div>
 
                   {isClickable ? (
@@ -319,7 +319,7 @@ export default function PosPage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <ShoppingBag size={20} color="#f59e0b" />
-            <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#f8fafc' }}>Current Order</h2>
+            <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#f8fafc' }}>KOT / Current Order</h2>
           </div>
           {cart.length > 0 && (
             <button
@@ -381,7 +381,7 @@ export default function PosPage() {
               cursor: 'pointer'
             }}
           >
-            Takeaway
+            Takeaway (Parcel)
           </button>
         </div>
 
@@ -427,7 +427,7 @@ export default function PosPage() {
                     {menuItem.name}
                   </div>
                   <div style={{ fontSize: '11px', color: '#94a3b8' }}>
-                    ${menuItem.price.toFixed(2)} &bull; ${(menuItem.price * quantity).toFixed(2)}
+                    ₹{menuItem.price.toFixed(2)} &bull; ₹{(menuItem.price * quantity).toFixed(2)}
                   </div>
                 </div>
 
@@ -472,13 +472,13 @@ export default function PosPage() {
                 onChange={(e) => setDiscountType(e.target.value as any)}
                 style={{ padding: '6px 8px', fontSize: '12px' }}
               >
-                <option value="flat">Flat ($)</option>
+                <option value="flat">Flat (₹)</option>
                 <option value="percent">Percent (%)</option>
               </select>
               <input
                 type="number"
                 min="0"
-                step="0.01"
+                step="1"
                 placeholder="0.00"
                 className="input-field"
                 value={discountValue || ''}
@@ -493,24 +493,24 @@ export default function PosPage() {
         <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '12px', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '13px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', color: '#94a3b8' }}>
             <span>Subtotal:</span>
-            <span>${cartSubtotal.toFixed(2)}</span>
+            <span>₹{cartSubtotal.toFixed(2)}</span>
           </div>
 
           {clampedDiscount > 0 && (
             <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fb7185' }}>
               <span>Discount:</span>
-              <span>-${clampedDiscount.toFixed(2)}</span>
+              <span>-₹{clampedDiscount.toFixed(2)}</span>
             </div>
           )}
 
           <div style={{ display: 'flex', justifyContent: 'space-between', color: '#94a3b8' }}>
-            <span>Tax ({taxRate}%):</span>
-            <span>${estimatedTax.toFixed(2)}</span>
+            <span>GST ({taxRate}%):</span>
+            <span>₹{estimatedTax.toFixed(2)}</span>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '18px', fontWeight: '800', color: '#f8fafc', paddingTop: '8px', borderTop: '1px dashed var(--border-subtle)' }}>
             <span>Total:</span>
-            <span style={{ color: '#f59e0b' }}>${estimatedTotal.toFixed(2)}</span>
+            <span style={{ color: '#f59e0b' }}>₹{estimatedTotal.toFixed(2)}</span>
           </div>
         </div>
 
@@ -522,7 +522,7 @@ export default function PosPage() {
           style={{ width: '100%', padding: '14px', marginTop: '16px', fontSize: '15px' }}
         >
           <Sparkles size={18} />
-          {isSubmitting ? 'Placing Order...' : `Place Order (${cart.reduce((s, c) => s + c.quantity, 0)} items)`}
+          {isSubmitting ? 'Placing Order...' : `Generate KOT (${cart.reduce((s, c) => s + c.quantity, 0)} items)`}
         </button>
       </div>
 

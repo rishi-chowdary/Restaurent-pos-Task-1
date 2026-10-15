@@ -122,7 +122,7 @@ export default function OrdersPage() {
             Live Orders & Kitchen Board
           </h1>
           <p style={{ color: '#94a3b8', fontSize: '13px', marginTop: '2px' }}>
-            Track order lifecycles, kitchen preparations, and billing settlements
+            Track order lifecycles, kitchen preparations, and billing settlements in Indian Rupees (₹)
           </p>
         </div>
 
@@ -264,7 +264,7 @@ export default function OrdersPage() {
                           <span style={{ color: '#cbd5e1' }}>
                             <strong style={{ color: '#f59e0b' }}>{item.quantity}x</strong> {item.nameSnapshot}
                           </span>
-                          <span style={{ color: '#94a3b8' }}>${item.lineTotal.toFixed(2)}</span>
+                          <span style={{ color: '#94a3b8' }}>₹{item.lineTotal.toFixed(2)}</span>
                         </div>
                       ))}
                     </div>
@@ -275,10 +275,10 @@ export default function OrdersPage() {
                     <div>By: {order.createdBy?.name || 'Staff'}</div>
                     <div style={{ textAlign: 'right' }}>
                       <span style={{ fontSize: '16px', fontWeight: '800', color: '#f8fafc' }}>
-                        ${order.total.toFixed(2)}
+                        ₹{order.total.toFixed(2)}
                       </span>
                       <div style={{ fontSize: '10px', color: '#64748b' }}>
-                        (Tax: ${order.taxAmount.toFixed(2)}{order.discountAmount > 0 ? `, Disc: -$${order.discountAmount.toFixed(2)}` : ''})
+                        (GST: ₹{order.taxAmount.toFixed(2)}{order.discountAmount > 0 ? `, Disc: -₹${order.discountAmount.toFixed(2)}` : ''})
                       </div>
                     </div>
                   </div>
@@ -294,7 +294,7 @@ export default function OrdersPage() {
                         className="btn btn-primary"
                         style={{ flex: 1, padding: '8px 12px', fontSize: '12px' }}
                       >
-                        <ChefHat size={14} /> Start Preparing
+                        <ChefHat size={14} /> Send to Kitchen
                       </button>
                     )}
 
@@ -304,7 +304,7 @@ export default function OrdersPage() {
                         className="btn btn-primary"
                         style={{ flex: 1, padding: '8px 12px', fontSize: '12px', background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', color: '#ffffff' }}
                       >
-                        <BellRing size={14} /> Mark Ready
+                        <BellRing size={14} /> Ready to Serve
                       </button>
                     )}
 
@@ -333,7 +333,7 @@ export default function OrdersPage() {
                         className="btn btn-secondary"
                         style={{ padding: '8px 12px', fontSize: '12px', borderColor: 'rgba(245, 158, 11, 0.4)', color: '#f59e0b' }}
                       >
-                        <CreditCard size={14} /> Record Pay
+                        <CreditCard size={14} /> Settle Bill
                       </button>
                     )}
                   </div>
@@ -355,7 +355,7 @@ export default function OrdersPage() {
                       className="btn btn-secondary"
                       style={{ padding: '6px 10px', fontSize: '11px' }}
                     >
-                      <Printer size={12} /> Receipt
+                      <Printer size={12} /> Bill / Receipt
                     </button>
 
                     {isAdmin && !isCompleted && !isCancelled && (
