@@ -4,6 +4,16 @@ A production-grade, full-stack Restaurant POS and Kitchen Order Management syste
 
 ---
 
+## 🚀 Live Demo & Deployed URLs
+
+| Service | Platform | Live URL | Status |
+|---|---|---|---|
+| **Frontend Web App** | **Vercel** | [https://restaurent-pos-task-1.vercel.app](https://restaurent-pos-task-1.vercel.app/) | Active |
+| **Backend REST API** | **Render** | [https://restaurent-pos-task-1.onrender.com](https://restaurent-pos-task-1.onrender.com/api/health) | Active |
+| **Source Code** | **GitHub** | [https://github.com/rishi-chowdary/Restaurent-pos-Task-1](https://github.com/rishi-chowdary/Restaurent-pos-Task-1) | Active |
+
+---
+
 ## Tech Stack & Architecture
 
 - **Frontend:** Next.js 14 (App Router, React, TypeScript), Vanilla CSS design system with glassmorphism, responsive grid layout, Lucide icons.
@@ -179,24 +189,24 @@ restaurant-pos/
 
 ## Production Deployment Guide
 
-### Deploying the Backend (Render or Railway)
+### Deploying the Backend (Render)
 1. Push code to GitHub.
-2. Create a new Web Service on Render or Railway pointing to the `/server` directory.
+2. Create a new Web Service on Render pointing to the `/server` directory.
 3. Build command: `npm install && npm run build`
 4. Start command: `node dist/server.js`
 5. Set environment variables:
    - `PORT`: `5000` (or dynamic provided by host)
    - `NODE_ENV`: `production`
-   - `MONGODB_URI`: `mongodb+srv://<user>:<password>@cluster0.mongodb.net/restaurant-pos?retryWrites=true&w=majority`
-   - `JWT_SECRET`: `<secure-random-secret>`
-   - `CLIENT_URL`: `https://your-client.vercel.app`
+   - `MONGODB_URI`: `mongodb+srv://f6729502_db_user:TMRY60dal294xGQl@restaurent-pos.loqfgyo.mongodb.net/restaurant-pos?retryWrites=true&w=majority`
+   - `JWT_SECRET`: `pos_secret_key_development_change_in_production_jwt_9921`
+   - `CLIENT_URL`: `https://restaurent-pos-task-1.vercel.app`
 
 ### Deploying the Frontend (Vercel)
 1. Import repository on Vercel and set the Root Directory to `client`.
 2. Framework preset: Next.js.
 3. Build command: `npm run build`
 4. Environment variable:
-   - `NEXT_PUBLIC_API_URL`: `https://your-api.onrender.com`
+   - `NEXT_PUBLIC_API_URL`: `https://restaurent-pos-task-1.onrender.com`
 
 ---
 
