@@ -46,7 +46,7 @@ To run the project with the live connected cloud database, create a file named `
 PORT=5000
 NODE_ENV=development
 MONGODB_URI=mongodb+srv://f6729502_db_user:TMRY60dal294xGQl@restaurent-pos.loqfgyo.mongodb.net/restaurant-pos?retryWrites=true&w=majority
-JWT_SECRET=pos_secret_key_development_change_in_production_jwt_9921
+JWT_SECRET=da9dfffe7a3fc6a59d12128d52382a24ba99440ee699d10eed33464ca265bceb
 JWT_EXPIRES_IN=1d
 CLIENT_URL=http://localhost:3000
 DEFAULT_TAX_RATE=5.0
