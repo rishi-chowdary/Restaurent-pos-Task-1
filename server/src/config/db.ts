@@ -5,6 +5,10 @@ import { env } from './env';
 let memoryServer: MongoMemoryServer | null = null;
 
 export async function connectDatabase(): Promise<void> {
+  if (mongoose.connection.readyState >= 1) {
+    return;
+  }
+
   try {
     let uri = env.mongodbUri;
 

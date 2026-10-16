@@ -14,7 +14,12 @@ export function createApp() {
     cors({
       origin: (origin, callback) => {
         // Allow requests with no origin (like mobile apps, curl, or server-to-server) or matching clientUrl
-        if (!origin || origin === env.clientUrl || env.nodeEnv === 'development') {
+        if (
+          !origin ||
+          origin === env.clientUrl ||
+          env.nodeEnv === 'development' ||
+          origin.endsWith('.vercel.app')
+        ) {
           callback(null, true);
         } else {
           callback(new Error('Blocked by CORS policy'));
