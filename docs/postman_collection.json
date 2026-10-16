@@ -1,0 +1,772 @@
+{
+  "info": {
+    "_postman_id": "c8a49c2d-93cb-4f39-952a-9e123456789a",
+    "name": "Savor POS - Restaurant API",
+    "description": "Comprehensive Postman Collection for Savor POS — Restaurant Point of Sale & Kitchen Order Management System. Includes authentication, menu management, order lifecycle, payment processing, reports, and tax settings.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "staffToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "orderId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "menuItemId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Health Check",
+      "item": [
+        {
+          "name": "Get API Health Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            },
+            "description": "Returns operational health status and current UTC timestamp."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Authentication",
+      "item": [
+        {
+          "name": "Login as Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.success && json.data && json.data.token) {",
+                  "    pm.collectionVariables.set('adminToken', json.data.token);",
+                  "    console.log('Saved adminToken');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@restaurant.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Authenticates as Admin (Rohan Sharma) and sets collection variable adminToken."
+          },
+          "response": []
+        },
+        {
+          "name": "Login as Staff",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.success && json.data && json.data.token) {",
+                  "    pm.collectionVariables.set('staffToken', json.data.token);",
+                  "    console.log('Saved staffToken');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"staff@restaurant.com\",\n  \"password\": \"staff123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Authenticates as Staff (Priya Patel) and sets collection variable staffToken."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current Authenticated User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Returns details of the currently authenticated user session."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Menu Catalog",
+      "item": [
+        {
+          "name": "List All Menu Items",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.success && json.data && json.data.length > 0) {",
+                  "    pm.collectionVariables.set('menuItemId', json.data[0]._id);",
+                  "    console.log('Saved menuItemId:', json.data[0]._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/menu",
+              "host": ["{{baseUrl}}"],
+              "path": ["menu"]
+            },
+            "description": "Fetches active dishes across all categories. Automatically saves the first dish ID to menuItemId."
+          },
+          "response": []
+        },
+        {
+          "name": "Filter Menu by Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/menu?category=Biryani & Rice",
+              "host": ["{{baseUrl}}"],
+              "path": ["menu"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "Biryani & Rice"
+                }
+              ]
+            },
+            "description": "Filters items by category name."
+          },
+          "response": []
+        },
+        {
+          "name": "Search Menu by Keyword",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/menu?q=Tikka",
+              "host": ["{{baseUrl}}"],
+              "path": ["menu"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "Tikka"
+                }
+              ]
+            },
+            "description": "Searches menu items matching a search query keyword."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Menu Item by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/menu/{{menuItemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["menu", "{{menuItemId}}"]
+            },
+            "description": "Fetches a single menu item by MongoDB ObjectId."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Menu Item (Admin Only)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Paneer Lababdar\",\n  \"category\": \"Curries & Gravies\",\n  \"price\": 280,\n  \"isAvailable\": true,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/menu",
+              "host": ["{{baseUrl}}"],
+              "path": ["menu"]
+            },
+            "description": "Creates a new dish in the catalog. Requires Admin role."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Menu Item (Admin Only)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Paneer Lababdar Special\",\n  \"category\": \"Curries & Gravies\",\n  \"price\": 295,\n  \"isAvailable\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/menu/{{menuItemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["menu", "{{menuItemId}}"]
+            },
+            "description": "Updates existing item details. Requires Admin role."
+          },
+          "response": []
+        },
+        {
+          "name": "Deactivate Menu Item (Admin Only)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/menu/{{menuItemId}}/deactivate",
+              "host": ["{{baseUrl}}"],
+              "path": ["menu", "{{menuItemId}}", "deactivate"]
+            },
+            "description": "Toggles item availability/active state. Soft delete without breaking historical order auditability."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Orders & Kitchen Lifecycle",
+      "item": [
+        {
+          "name": "Create Dine-In Order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.success && json.data && json.data._id) {",
+                  "    pm.collectionVariables.set('orderId', json.data._id);",
+                  "    console.log('Saved orderId:', json.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"dine-in\",\n  \"tableNumber\": \"Table 4\",\n  \"items\": [\n    {\n      \"menuItemId\": \"{{menuItemId}}\",\n      \"quantity\": 2\n    }\n  ],\n  \"discountType\": \"percent\",\n  \"discountValue\": 10\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders"]
+            },
+            "description": "Places a new Dine-In order. Server authoritatively computes subtotal, tax (5%), and discount."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Takeaway Order",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"takeaway\",\n  \"items\": [\n    {\n      \"menuItemId\": \"{{menuItemId}}\",\n      \"quantity\": 1\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders"]
+            },
+            "description": "Places a Takeaway order without table number."
+          },
+          "response": []
+        },
+        {
+          "name": "List Orders (Paginated & Filtered)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders?status=Pending&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Pending"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Retrieves orders with pagination and status filtering."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderId}}"]
+            },
+            "description": "Fetches a full order ticket by MongoDB ObjectId."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Order Items (Allowed while Pending)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"menuItemId\": \"{{menuItemId}}\",\n      \"quantity\": 3\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}/items",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderId}}", "items"]
+            },
+            "description": "Modifies order items and recomputes all billing math. Only allowed while order status is Pending."
+          },
+          "response": []
+        },
+        {
+          "name": "Transition Status: Pending -> Preparing",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Preparing\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderId}}", "status"]
+            },
+            "description": "Transitions kitchen ticket from Pending to Preparing."
+          },
+          "response": []
+        },
+        {
+          "name": "Transition Status: Preparing -> Ready",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Ready\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderId}}", "status"]
+            },
+            "description": "Transitions kitchen ticket from Preparing to Ready."
+          },
+          "response": []
+        },
+        {
+          "name": "Record Order Payment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"UPI\",\n  \"amount\": 882,\n  \"reference\": \"UPI-PAY-782910\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}/payment",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderId}}", "payment"]
+            },
+            "description": "Records tender (Cash, UPI, Card). Payment amount must match order total. Sets paymentStatus to Paid."
+          },
+          "response": []
+        },
+        {
+          "name": "Transition Status: Ready -> Completed",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Completed\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderId}}", "status"]
+            },
+            "description": "Finalizes the ticket to Completed. Server enforces that paymentStatus must be Paid."
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Order (Admin Only)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Customer requested cancellation\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/{{orderId}}/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "{{orderId}}", "cancel"]
+            },
+            "description": "Cancels an order. Requires Admin role."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Reports & Analytics",
+      "item": [
+        {
+          "name": "Get Daily Sales Report (Admin Only)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reports/daily-sales?date=2026-10-16",
+              "host": ["{{baseUrl}}"],
+              "path": ["reports", "daily-sales"],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2026-10-16"
+                }
+              ]
+            },
+            "description": "Computes daily revenue, tax collected, discounts granted, payment method breakdown, cashier performance, and top-selling dishes. Requires Admin role."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Settings",
+      "item": [
+        {
+          "name": "Get System Settings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["settings"]
+            },
+            "description": "Retrieves the currently configured system tax rate."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Tax Rate (Admin Only)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"taxRate\": 5.0\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["settings"]
+            },
+            "description": "Updates the restaurant GST / sales tax rate. Requires Admin role."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

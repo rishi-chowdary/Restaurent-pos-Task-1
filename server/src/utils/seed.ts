@@ -38,31 +38,38 @@ export const INDIAN_MENU_ITEMS = [
 ];
 
 export async function seedDatabase(): Promise<void> {
-  const userCount = await UserModel.countDocuments();
-  if (userCount === 0) {
-    const adminPasswordHash = await bcrypt.hash('admin123', 10);
-    const staffPasswordHash = await bcrypt.hash('staff123', 10);
+  const adminPasswordHash = await bcrypt.hash('admin123', 10);
+  const staffPasswordHash = await bcrypt.hash('staff123', 10);
 
-    const admin = await UserModel.create({
+  let admin = await UserModel.findOne({ email: 'admin@restaurant.com' });
+  if (!admin) {
+    admin = await UserModel.create({
       name: 'Rohan Sharma',
       email: 'admin@restaurant.com',
       passwordHash: adminPasswordHash,
       role: 'Admin',
     });
+    process.stdout.write('[seed] Seeded default Admin account (Rohan Sharma)\n');
+  }
 
+  const staff = await UserModel.findOne({ email: 'staff@restaurant.com' });
+  if (!staff) {
     await UserModel.create({
       name: 'Priya Patel',
       email: 'staff@restaurant.com',
       passwordHash: staffPasswordHash,
       role: 'Staff',
     });
+    process.stdout.write('[seed] Seeded default Staff account (Priya Patel)\n');
+  }
 
+  const settingsCount = await SettingsModel.countDocuments();
+  if (settingsCount === 0) {
     await SettingsModel.create({
       taxRate: 5.0, // Standard 5% GST for restaurant services in India
       updatedBy: admin._id,
     });
-
-    process.stdout.write('[seed] Seeded default Admin and Staff accounts\n');
+    process.stdout.write('[seed] Seeded initial tax settings (5% GST)\n');
   }
 
   // Check if Indian menu items are already seeded

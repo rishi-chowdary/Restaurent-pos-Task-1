@@ -1,5 +1,5 @@
 async function runTests() {
-  const BASE_URL = 'http://localhost:5000/api';
+  const BASE_URL = process.env.TEST_API_URL || 'http://localhost:5000/api';
   let passed = 0;
   let failed = 0;
 
