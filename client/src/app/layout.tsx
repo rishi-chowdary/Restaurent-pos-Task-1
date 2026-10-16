@@ -6,6 +6,14 @@ import { Navbar } from '../components/navbar';
 export const metadata: Metadata = {
   title: 'Savor POS - Restaurant Point of Sale & Order Management',
   description: 'Production-ready Restaurant POS & Order Management System for modern dining and takeaway',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export default function RootLayout({
