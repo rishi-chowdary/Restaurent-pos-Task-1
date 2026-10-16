@@ -73,3 +73,18 @@ export async function seedDatabase(): Promise<void> {
     process.stdout.write('[seed] Seeded authentic Indian restaurant menu in Indian Rupees (INR)\n');
   }
 }
+
+if (process.argv[1] && process.argv[1].includes('seed')) {
+  import('../config/db').then(async ({ connectDatabase, disconnectDatabase }) => {
+    try {
+      await connectDatabase();
+      await seedDatabase();
+      process.stdout.write('[seed] Seeding completed successfully!\n');
+    } catch (e) {
+      process.stderr.write(`[seed] Seeding failed: ${(e as Error).message}\n`);
+    } finally {
+      await disconnectDatabase();
+      process.exit(0);
+    }
+  });
+}

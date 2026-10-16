@@ -37,16 +37,37 @@ A production-grade, full-stack Restaurant POS and Kitchen Order Management syste
 
 ---
 
-## Quick Start (Zero-Config Local Run)
+## Reviewer Setup & Database Configuration
+
+To run the project with the live connected cloud database, create a file named `.env` in the `server/` directory:
+
+### `server/.env`
+```env
+PORT=5000
+NODE_ENV=development
+MONGODB_URI=mongodb+srv://f6729502_db_user:TMRY60dal294xGQl@restaurent-pos.loqfgyo.mongodb.net/restaurant-pos?retryWrites=true&w=majority
+JWT_SECRET=pos_secret_key_development_change_in_production_jwt_9921
+JWT_EXPIRES_IN=1d
+CLIENT_URL=http://localhost:3000
+DEFAULT_TAX_RATE=5.0
+```
+
+> **Note for Reviewers:**
+> - The MongoDB Atlas URI above is pre-configured and seeded with sample admin/staff accounts and the authentic Indian restaurant menu catalog.
+> - If you prefer zero-config or offline testing, leave `MONGODB_URI` blank and the server will automatically spin up an isolated in-memory database instance (`mongodb-memory-server`).
+
+---
+
+## Quick Start Guide
 
 ### Prerequisites
-- Node.js $\ge 18$
-- npm $\ge 9$
+- Node.js >= 18
+- npm >= 9
 
 ### 1. Clone & Install
 ```bash
-git clone <repo-url>
-cd restaurant-pos
+git clone https://github.com/rishi-chowdary/Restaurent-pos-Task-1.git
+cd Restaurent-pos-Task-1
 
 # Install backend dependencies
 cd server && npm install
@@ -56,22 +77,25 @@ cd ../client && npm install
 cd ..
 ```
 
-### 2. Start the Backend API
+### 2. Configure Environment
+Create `server/.env` with the values provided in the **Reviewer Setup** section above.
+
+### 3. Start the Backend API
 ```bash
 cd server
 npm run dev
 ```
-*Note: If `MONGODB_URI` is not set in `.env`, the server automatically spins up an in-memory MongoDB instance and seeds sample users and menu items immediately.*
 The API will run on `http://localhost:5000`.
+*(Optional: run `npm run seed` to re-seed demo accounts and menu catalog if needed).*
 
-### 3. Start the Next.js Frontend
+### 4. Start the Next.js Frontend
 ```bash
 cd client
 npm run dev
 ```
 The client will run on `http://localhost:3000`. Open `http://localhost:3000` in your browser.
 
-### 4. Run the Automated Test Suite
+### 5. Run the Automated Test Suite
 With the server running on port 5000:
 ```bash
 cd server
