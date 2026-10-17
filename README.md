@@ -85,8 +85,8 @@ To run the project locally with the live connected cloud database, create `serve
 ```env
 PORT=5000
 NODE_ENV=development
-MONGODB_URI=mongodb+srv://f6729502_db_user:TMRY60dal294xGQl@restaurent-pos.loqfgyo.mongodb.net/restaurant-pos?retryWrites=true&w=majority
-JWT_SECRET=da9dfffe7a3fc6a59d12128d52382a24ba99440ee699d10eed33464ca265bceb
+MONGODB_URI=your_mongodb_connection_uri_here
+JWT_SECRET=your_jwt_secret_key_here
 JWT_EXPIRES_IN=1d
 CLIENT_URL=http://localhost:3000
 DEFAULT_TAX_RATE=5.0
